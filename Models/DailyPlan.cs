@@ -6,17 +6,21 @@ using System.Web;
 
 namespace Loadability.Models
 {
-    public class PrDetails
+    public class DailyPlan
     {
-        public int PrDetailsId { get; set; }
+        public int DailyPlanId { get; set; }
         public int CfaId { get; set; }
         public int SkuId { get; set; }
+        [ForeignKey("CfaId")]
         public Cfa Cfa { get; set; }
+        [ForeignKey("SkuId")]
         public Sku Sku { get; set; }
-        public decimal PrQty { get; set; }
+        public decimal PriorityQty { get; set; }
+        public decimal QtyInTransit { get; set; }
         [Column(TypeName = "datetime2")]
-        public DateTime IssueDate { get; set; }
+        public DateTime PlanDate { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime CreatedAt { get; set; }
+        public string  CreatedBy { get; set; }
     }
 }

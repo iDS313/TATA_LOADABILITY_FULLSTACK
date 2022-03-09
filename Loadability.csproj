@@ -45,7 +45,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper.Excel, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\gakid\Downloads\CsvHelper.Excel-main\CsvHelper.Excel-main\src\CsvHelper.Excel\bin\Debug\netstandard2.0\CsvHelper.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MiniExcel, Version=1.23.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MiniExcel.1.23.2\lib\net45\MiniExcel.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -53,6 +63,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.IO.FileSystem.Primitives.4.0.1\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.IO.Packaging.4.0.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -111,6 +129,7 @@
       <Private>True</Private>
       <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
@@ -171,7 +190,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CfaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LoadPlanController.cs" />
+    <Compile Include="Controllers\DailyPlanController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PlanDetailsController.cs" />
     <Compile Include="Controllers\PrDetailsController.cs" />
@@ -181,17 +200,21 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202203070942093_init.cs" />
-    <Compile Include="Migrations\202203070942093_init.Designer.cs">
-      <DependentUpon>202203070942093_init.cs</DependentUpon>
+    <Compile Include="Migrations\202203081254354_init.cs" />
+    <Compile Include="Migrations\202203081254354_init.Designer.cs">
+      <DependentUpon>202203081254354_init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203091154211_Priority_cfaId.cs" />
+    <Compile Include="Migrations\202203091154211_Priority_cfaId.Designer.cs">
+      <DependentUpon>202203091154211_Priority_cfaId.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Cfa.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="Models\LoadPlan.cs" />
+    <Compile Include="Models\DailyPlan.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\PlanDetails.cs" />
+    <Compile Include="Models\LoadPlan.cs" />
     <Compile Include="Models\PrDetails.cs" />
     <Compile Include="Models\Priority.cs" />
     <Compile Include="Models\Sku.cs" />
@@ -199,6 +222,7 @@
     <Compile Include="Models\Truck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\ImportDailyPlan.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -1978,7 +2002,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Dashboard_Layout.cshtml" />
-    <Content Include="Views\LoadPlan\Index.cshtml" />
+    <Content Include="Views\DailyPlan\Index.cshtml" />
     <Content Include="Views\PrDetails\Index.cshtml" />
     <Content Include="Views\Stock\Index.cshtml" />
   </ItemGroup>
@@ -2001,8 +2025,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202203070942093_init.resx">
-      <DependentUpon>202203070942093_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202203081254354_init.resx">
+      <DependentUpon>202203081254354_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203091154211_Priority_cfaId.resx">
+      <DependentUpon>202203091154211_Priority_cfaId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -34,8 +34,9 @@ namespace Loadability.Models
         public DbSet<Sku> Sku { get; set; }
         public DbSet<Cfa> Cfa { get; set; }
         public DbSet<PrDetails> PrDetails { get; set; }
-        public DbSet<PlanDetails> PlanDetails { get; set; }
         public DbSet<LoadPlan> LoadPlans { get; set; }
+
+        public DbSet<DailyPlan> DailyPlan { get; set; }
         public DbSet<StockDetails> StockDetails { get; set; }
         public DbSet<Priority> Priority { get; set; }
         public DbSet<Truck> Trucks { get; set; }

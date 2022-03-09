@@ -1,0 +1,183 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Dashboard_Layout.cshtml";
+}
+<div class="container px-10 pt-4">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="/LoadPlan/">Add Load Plan</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/PrDetails/">Add PR Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Stock/">Add Stock Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="load-plan.html">Load Plan - CFA</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" ng-app="LoadPlan" ng-controller="LoadplanController">
+        <div id="home" class="container tab-pane active" ng-init="init()">
+            <br>
+
+            
+            <form action="#" id="load-plan">
+                <div class="container-fluid pb-4 px-5 mb-4" style="border-bottom:1px solid blue">
+                    <h3 class="my-3 text-center text-primary">Import Daily Plan</h3>
+                    <div class="row">
+                        <div class="col-md-5  mt-3">
+                            <div class="form-group position-relative">
+                                <label class="text-primary" for="fileupload">Upload PR Details</label>
+                                <div class="file-ip">
+                                    <span class="file-name"> </span><span class="download-btn" ng-click="upload()">
+                                        <i class="fa fa-upload"></i>
+                                    </span> <span>Select File</span>
+                                </div>
+                                <input type="file" accept=".xls,.xlsx" style="opacity:0" class="form-control" id="filesheet" name="fileupload" placeholder="Enter Shift of Packing" />
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <div class="form-group">
+                                <label class="text-primary" for="uname">Upload Date</label>
+                                <input type="date"  class="form-control" ng-model="LoadPlan.PlanDate" ng-change="dateChange()" placeholder=" Add Quantity in Transit "
+                                       id="uploadDate" name="PlanDate" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pt-3">
+                            <br />
+                            <a class="btn btn-custom btn-gradient mt-1" id="download" href="" style=" height: 31px; display: inline-flex; align-items: center;"> Download </a>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="container px-5">
+
+                        <h3 class="my-3 text-center text-primary">Add Daily Plan</h3>
+                        <div class="row">
+                            <div class="col-md-3  mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="cfa">Select CFA</label>
+                                    <select class="form-control" ng-change="getPlan()" name="cfa" id="cfa" ng-model="LoadPlan.CfaId" required>
+                                        <option value="" selected="selected">Select CFA</option>
+                                        <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.DepoCode}}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="cfa">&nbsp;</label>
+                                    <select class="form-control" ng-change="getPlan()" name="cfa" id="cfa" ng-model="LoadPlan.CfaId" required>
+                                        <option value="" selected="selected">Select CFA</option>
+                                        <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.CfaLocation}}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-5 ml-md-5 mt-3">
+                                <div class="form-group position-relative">
+                                    <label class="text-primary" for="fileupload">Add Priority Quantity</label>
+                                    <!-- <div class="file-ip"><span class="file-name ng-binding">  </span><span class="download-btn" ng-click="download()"><i class="fa fa-download"></i></span>  <span>Select File</span> </div> -->
+                                    <input type="number" class="form-control" name="PriorityQty" ng-model="LoadPlan.PriorityQty"
+                                           required placeholder="Enter Priority Qty">
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="sku">Select SKU</label>
+                                    <select class="form-control" ng-change="getPlan()" name="SkuId" ng-model="LoadPlan.SkuId" required id="sku">
+                                        <option value="">Select SKU</option>
+                                        <option ng-repeat="y in sku" value="{{y.SkuId}}">{{y.SkuCode}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="sku">&nbsp;</label>
+                                    <select class="form-control" ng-change="getPlan()" name="SkuId" ng-model="LoadPlan.SkuId" required id="sku">
+                                        <option value="">Select SKU</option>
+                                        <option ng-repeat="a in sku" value="{{a.SkuId}}">{{a.SkuTitle}}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-5 ml-md-5 mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="uname"> Add Quantity in Transit</label>
+                                    <input type="number" class="form-control" ng-model="LoadPlan.QtyInTransit" placeholder=" Add Quantity in Transit "
+                                           name="QtyInTransit" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6  mt-3">
+                                <div class="form-group">
+                                    <label class="text-primary" for="uname"> Date</label>
+                                    <input type="date" class="form-control" ng-model="LoadPlan.PlanDate" ng-change="dateChange()" placeholder=" Add Quantity in Transit "
+                                           id="date_picker" name="PlanDate" required>
+                                </div>
+                            </div>
+                           
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 my-3">
+                                <div class="form-group">
+                                    <a class="btn btn-custom" href="/">Previous</a>
+                                    <a href="/PrDetails" class="btn btn-custom">Next</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 my-3 pr-4">
+                                <div class="form-group text-right pr-3">
+                                    <button type="button" class="btn btn-custom btn-gradient-danger" ng-click="delete()">Delete</button>
+                                    <button type="button" class="btn btn-custom btn-gradient" ng-click="save()">Save Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+</form>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="~/Content/vendor/jquery/jquery.min.js"></script>*@
+    <script src="~/Content/js/angular.js"></script>
+    <script src="~/Content/js/LoadPlan/init.js"></script>
+    <script>
+        $("#filesheet").on("change", function() {
+            var file = document.getElementById("filesheet");
+            if (file.files[0] != undefined) {
+                console.log("file", file.files[0].name);
+                $(".file-name").html(file.files[0].name);
+            } else {
+                $(".file-name").html(" ");
+            }
+        });
+        $(document).ready(() => {
+            setHref();
+            $("#uploadDate").on("change", function () {
+                setHref();
+            })
+        });
+        function setHref () {
+            let d = $("#uploadDate").val().split("-");
+            let date = new Date(d);
+            d[2] = date.getDate() < 10 ? (`0${date.getDate().toString()}`) : date.getDate();
+            d[1] = (date.getMonth() + 1);
+            let val = "Plan_" + d[2] + "_DailyPlan.xlsx";
+            let folder = "DailyPlan_" + d[1]
+            console.log("fileLoc", val);
+            $("#download").attr("href", "/Content/Excel/" + folder+"/"+ val);
+        }
+    </script>
+}

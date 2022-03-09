@@ -17,9 +17,7 @@ namespace Loadability.Controllers
         // GET: Cfa
         public ActionResult Index()
         {
-
-
-            var cfa = _ctx.Cfa;
+            var cfa = _ctx.Cfa.ToList();
             return Json(new { cfa=cfa},JsonRequestBehavior.AllowGet);
         }
     }

@@ -7,13 +7,13 @@ namespace Loadability.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class init : IMigrationMetadata
+    public sealed partial class Priority_cfaId : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(init));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Priority_cfaId));
         
         string IMigrationMetadata.Id
         {
-            get { return "202203070942093_init"; }
+            get { return "202203091154211_Priority_cfaId"; }
         }
         
         string IMigrationMetadata.Source
