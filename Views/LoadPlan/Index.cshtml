@@ -31,7 +31,7 @@
 
             <div class="container-fluid pb-3  mb-3">
                 <div class="row">
-                    <div class="col-md-3  mt-3">
+                    <div class="col-md-4  mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">Select CFA</label>
                             <select class="form-control" ng-change="getweight()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
@@ -41,7 +41,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">&nbsp;</label>
                             <select class="form-control" ng-change="getweight()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
@@ -51,15 +51,15 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 mt-3">
+                    @*<div class="col-md-3 mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">Enter No Of Trucks</label>
                             <input type="text" ng-model="NoOfTrucks" ng-change="priorityForm()" class="form-control" />
 
                         </div>
-                    </div>
+                    </div>*@
 
-                    <div class="col-md-3 mt-3">
+                    <div class="col-md-4 mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">Date</label>
                             <input class="form-control" type="date" ng-model="payload.Plandate" />
@@ -75,31 +75,36 @@
                     <div class="col-md-12">
                         <div class="alert alert-success">
                             <strong class="text-primary">Total Weight : {{weight/1000}} Tons  </strong>
+                            <strong class="float-right"> Remaining Weight : {{remainingCapacity/1000}}</strong>
                         </div>
                         
                     </div>
                    
                 </div>
             </div>
-            <div class="container-fluid pb-5" ng-repeat="lp in loadPlan">
+            <div class="container-fluid pb-5" >
                 <div class="row px-3">
-                    <div class="col-md-8"></div>
+                    <div class="col-md-7"></div>
                     <div class="col-md-4 ">
                         <div class="row">
                             <label class="text-primary">Select Truck </label>
                             
-                                <select class="form-control" ng-change="selectTruck(lp)"  ng-model="lp.truck.TruckId" required>
+                                <select class="form-control"    required>
                                     <option value="" selected="selected">Select Truck</option>
                                     <option ng-repeat="x in trucks" value="{{x.TruckId}}">{{x.Name}}</option>
 
                                 </select>
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <br />
+                        <button class="btn btn-custom btn-gradient" style=" height: 29px; position: relative; top: 8px; display: inline-flex; align-items: center;">✔</button>
+                    </div>
                 </div>
                 <table class=" w-100 my-4" style="overflow-x: scroll;">
                     <thead>
                         <tr>
-                            <th colspan="4" class="text-center captions">Load Plan</th>
+                            <th colspan="4" class="text-center captions">Preview Load Plan for Selected Truck</th>
                         </tr>
                         <tr class="tr-head">
                             <th>
@@ -130,7 +135,9 @@
                     </tbody>
                 </table>
 
-
+                <div class="container-fluid px-0">
+                    <button class="btn btn-custom btn-gradient">Save Load Plan</button>
+                </div>
                
             </div>
             <div class="container">
