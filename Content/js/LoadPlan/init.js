@@ -5,7 +5,7 @@ var app = angular.module("LoadPlan", []);
 app.controller("LoadplanController", function ($scope, $http) {
     $scope.cfa = [];
     $scope.sku = [];
-    $scope.LoadPlan = { SkuId: "", CfaId: "", PriorityQty: "", QtyInTransit: "", PlanDate: new Date() };
+    $scope.LoadPlan = { SkuId: "", CfaId: "", SIT: "", QtyInTransit: "", PlanDate: new Date() };
 
     $scope.init = function () {
         $http({
@@ -109,7 +109,7 @@ app.controller("LoadplanController", function ($scope, $http) {
         }, function ({data,status }) {
             console.log(status);
             if (status == 404) {
-                toastr.error("Load Plan Dont Exist");
+                toastr.error("Load Plan does not Exist");
             }
            
         })
@@ -124,8 +124,9 @@ app.controller("LoadplanController", function ($scope, $http) {
         let fileName = file.name.split(".");
         if (fileName[1] == "xlsx" || fileName[1] == "xls") {
             let fd = new FormData();
+            let date = $scope.LoadPlan.PlanDate;
             fd.append("excel", file, "DailyPlan.xlsx");
-            fd.append("date", $scope.LoadPlan.PlanDate);
+            fd.append("SaveDate",`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}` );
 
             $.ajax({
                 url: '/DailyPlan/UploadExcel',

@@ -40,5 +40,6 @@ namespace Loadability.Models
         public DbSet<StockDetails> StockDetails { get; set; }
         public DbSet<Priority> Priority { get; set; }
         public DbSet<Truck> Trucks { get; set; }
+        public DbSet<FileModel> FileModels { get; set; }
     }
 }

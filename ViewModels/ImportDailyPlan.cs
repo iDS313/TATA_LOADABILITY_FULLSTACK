@@ -16,7 +16,7 @@ namespace Loadability.ViewModels
         public decimal Priority { get; set; }
         [Display(Name = "SIT")]
         public decimal SIT { get; set; }
-        [Display(Name = "PlanDate")]
-        public DateTime PlanDate { get; set; } = DateTime.Now.Date;
+       // [Display(Name = "PlanDate")]
+       // public DateTime PlanDate { get; set; } = DateTime.Now.Date;
     }
 }

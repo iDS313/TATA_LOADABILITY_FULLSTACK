@@ -191,26 +191,30 @@
     <Compile Include="Controllers\CfaController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\DailyPlanController.cs" />
+    <Compile Include="Controllers\LoadPlanController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PlanDetailsController.cs" />
     <Compile Include="Controllers\PrDetailsController.cs" />
+    <Compile Include="Controllers\PriorityController.cs" />
     <Compile Include="Controllers\SkuController.cs" />
     <Compile Include="Controllers\StockController.cs" />
+    <Compile Include="Controllers\TrucksController.cs" />
     <Compile Include="DatabaseSeeder\MasterDataSeeder.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202203081254354_init.cs" />
-    <Compile Include="Migrations\202203081254354_init.Designer.cs">
-      <DependentUpon>202203081254354_init.cs</DependentUpon>
+    <Compile Include="Migrations\202203101338152_version_2.cs" />
+    <Compile Include="Migrations\202203101338152_version_2.Designer.cs">
+      <DependentUpon>202203101338152_version_2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202203091154211_Priority_cfaId.cs" />
-    <Compile Include="Migrations\202203091154211_Priority_cfaId.Designer.cs">
-      <DependentUpon>202203091154211_Priority_cfaId.cs</DependentUpon>
+    <Compile Include="Migrations\202203110946593_PrDate.cs" />
+    <Compile Include="Migrations\202203110946593_PrDate.Designer.cs">
+      <DependentUpon>202203110946593_PrDate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Cfa.cs" />
+    <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\DailyPlan.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -222,7 +226,12 @@
     <Compile Include="Models\Truck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\DailyPlanDto.cs" />
     <Compile Include="ViewModels\ImportDailyPlan.cs" />
+    <Compile Include="ViewModels\PlanReq.cs" />
+    <Compile Include="ViewModels\PriorityDto.cs" />
+    <Compile Include="ViewModels\PrUploadDto.cs" />
+    <Compile Include="ViewModels\StockDto.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -1917,8 +1926,12 @@
     <Content Include="Content\images\wavy-tech.jpg" />
     <Content Include="Content\js\angular.js" />
     <Content Include="Content\js\LoadPlan\init.js" />
+    <Content Include="Content\js\LoadPlan\plan.js" />
+    <Content Include="Content\js\LoadPlan\Priority.js" />
     <Content Include="Content\js\main.js" />
     <Content Include="Content\js\popper.js" />
+    <Content Include="Content\js\Pr\pr.js" />
+    <Content Include="Content\js\Stock.js" />
     <Content Include="Content\vendor\bootstrap\css\bootstrap.min.css" />
     <Content Include="Content\vendor\bootstrap\js\bootstrap.min.js" />
     <Content Include="Content\vendor\jquery\jquery.min.js" />
@@ -2005,11 +2018,14 @@
     <Content Include="Views\DailyPlan\Index.cshtml" />
     <Content Include="Views\PrDetails\Index.cshtml" />
     <Content Include="Views\Stock\Index.cshtml" />
+    <Content Include="Views\Priority\Index.cshtml" />
+    <Content Include="Views\LoadPlan\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Cfa\" />
     <Folder Include="Views\Sku\" />
+    <Folder Include="Views\Trucks\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -2025,11 +2041,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202203081254354_init.resx">
-      <DependentUpon>202203081254354_init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202203101338152_version_2.resx">
+      <DependentUpon>202203101338152_version_2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202203091154211_Priority_cfaId.resx">
-      <DependentUpon>202203091154211_Priority_cfaId.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202203110946593_PrDate.resx">
+      <DependentUpon>202203110946593_PrDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

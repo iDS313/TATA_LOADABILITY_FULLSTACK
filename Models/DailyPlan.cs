@@ -16,7 +16,10 @@ namespace Loadability.Models
         [ForeignKey("SkuId")]
         public Sku Sku { get; set; }
         public decimal PriorityQty { get; set; }
-        public decimal QtyInTransit { get; set; }
+
+        public decimal SIT { get; set; }
+        public decimal SHQ { get; set; }
+
         [Column(TypeName = "datetime2")]
         public DateTime PlanDate { get; set; }
         [Column(TypeName = "datetime2")]

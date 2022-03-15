@@ -6,7 +6,10 @@
 <div class="container px-10 pt-4">
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="/LoadPlan">Add Load Plan</a>
+            <a class="nav-link" href="/DailyPlan">Daily Plan</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Priority/">Prioritized Daily Plan</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/PrDetails">Add PR Details</a>
@@ -15,62 +18,76 @@
             <a class="nav-link active" href="/Stock">Add Stock Details</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="load-plan.html">Load Plan - CFA</a>
+            <a class="nav-link" href="/LoadPlan">Load Plan - CFA</a>
         </li>
     </ul>
 
     <!-- Tab panes -->
-    <div class="tab-content">
-        <div id="menu2" class="container tab-pane active">
-            <br>
+    <div class="tab-content" ng-app="StockDetails" ng-controller="StockDetailsController" >
+        <div id="menu2" class="container tab-pane active" ng-init="init()">
+            <div class="container-fluid pb-4 px-5 mb-4" style="border-bottom:1px solid blue">
+                <h3 class="my-3 text-center text-primary">Import Stock Details</h3>
+                <div class="row">
+                    <div class="col-md-5  mt-3">
+                        <div class="form-group position-relative">
+                            <label class="text-primary" for="fileupload">Upload Stock Details</label>
+                            <div class="file-ip">
+                                <span class="file-name"> </span><span class="download-btn" ng-click="upload()">
+                                    <i class="fa fa-upload"></i>
+                                </span> <span>Select File</span>
+                            </div>
+                            <input type="file" accept=".xls,.xlsx" style="opacity:0" class="form-control" id="filesheet" name="fileupload" placeholder="Enter Shift of Packing">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="form-group">
+                            <label class="text-primary" for="uname">Select Date</label>
+                            <input type="date" class="form-control " ng-model="payload.RecordedAt" placeholder=" Add Quantity in Transit " id="uploadDate" name="PlanDate" required="">
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-3">
+                        <br>
+                        <a class="btn btn-custom btn-gradient mt-2" id="download" href="/Content/Excel/DailyPlan_3/Plan_11_DailyPlan.xlsx" style=" height: 31px; display: inline-flex; align-items: center;"> Download </a>
+                    </div>
+                </div>
+            </div>
             <h3 class="my-3 text-center text-primary">Add Stock Details</h3>
             <form action="#">
                 <div class="container px-5">
                     <div class="row">
 
 
-                        <div class="form-group col-md-3 mt-3">
-                            <label class="text-primary" for="sku">Select SKU</label>
-                            <select class="form-control" name="SKU" id="">
-                                <option value="" selected="selected">Select SKU</option>
-                                <option value="1">14000000000319</option>
-                                <option value="2">14000000000324</option>
-                                <option value="3">14000000000329</option>
-                                <option value="4">14000000000334</option>
-                                <option value="5">14000000000446</option>
-                            </select>
+                        <div class="col-md-3 mt-3">
+                            <div class="form-group">
+                                <label class="text-primary" for="sku">Select SKU</label>
+                                <select class="form-control" ng-change="getstock()" name="SkuId" ng-model="payload.SkuId" required id="sku">
+                                    <option value="">Select SKU</option>
+                                    <option ng-repeat="y in sku" value="{{y.SkuId}}">{{y.SkuCode}}</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group col-md-3 mt-3">
-                            <label class="text-primary" for="sku">Select SKU</label>
-                            <select class="form-control" name="SKU" id="">
-                                <option value="" selected="selected">Select SKU</option>
-                                <option value="13">Tata Tea Elaichi Chai PP Rs 10 (34g)</option>
-                                <option value="14">Tata Gold Leaf 500gm Cathedral RSTG</option>
-                                <option value="15">Tata Gold Leaf 250gm Cathedral RSTG</option>
-                                <option value="16">Tata Gold Leaf 1kg Standipack RSTG</option>
-                                <option value="17">Tata Gold Mixture 250g Cathedral Pack</option>
-                                <option value="18">Tata Gold Mixture 500g Cathedral Pack</option>
-                                <option value="19">Tata Tea Gold Mixture 100g polypack</option>
-                            </select>
+                        <div class="col-md-3 mt-3">
+                            <div class="form-group">
+                                <label class="text-primary" for="sku">&nbsp;</label>
+                                <select class="form-control" ng-change="getstock()" name="SkuId" ng-model="payload.SkuId" required id="sku">
+                                    <option value="">Select SKU</option>
+                                    <option ng-repeat="a in sku" value="{{a.SkuId}}">{{a.SkuTitle}}</option>
+
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group col-md-5 ml-md-5 mt-3">
-                            <label class="text-primary" for="pr">Add Stock Quantity</label>
-                            <input class="form-control" type="number" name="pr" id="pr"
+                            <label class="text-primary" for="pr">Stock Quantity</label>
+                            <input class="form-control" type="number" ng-model="payload.StartQty" name="pr" id="pr"
                                    placeholder="Add Stock Quantity" required>
                         </div>
                         <div class="col-md-6 mt-3">
-                            <div class="form-group position-relative">
-                                <label class="text-primary" for="fileupload">Upload Stock Details</label>
-                                <div class="file-ip">
-                                    <span class="file-name ng-binding"> </span><span class="download-btn" ng-click="download()">
-                                        <i class="fa fa-download"></i>
-                                    </span> <span>Select File</span>
-                                </div>
-                                <input type="file" style="opacity:0" class="form-control" ng-disabled="IsEdit"
-                                       id="filesheet" name="fileupload" placeholder="Enter Shift of Packing">
+                            <div class="form-group">
+                                <label class="text-primary" for="uname">Select Date</label>
+                                <input type="date" class="form-control " ng-change="getstock()" ng-model="payload.RecordedAt" placeholder=" Add Quantity in Transit " id="uploadDate" name="PlanDate" required="">
                             </div>
                         </div>
-                        <div class="col-md-5 mt-3"></div>
+                        <div class="col-md-6"></div>
                         <div class="col-md-6 my-3">
                             <div class="form-group">
                                 <button class="btn btn-custom"> Previous</button>
@@ -80,7 +97,7 @@
                         <div class="col-md-6 my-3 pr-4">
                             <div class="form-group text-right pr-3">
                                 <button class="btn btn-custom btn-gradient-danger">Delete</button>
-                                <button class="btn btn-custom btn-gradient">Save Details</button>
+                                <button class="btn btn-custom btn-gradient" type="button" ng-click="save()">Save Details</button>
                             </div>
                         </div>
                     </div>
@@ -93,3 +110,22 @@
 
 
 </div>
+
+
+@section Scripts{
+    <script src="~/Content/js/angular.js"></script>
+    <script src="~/Content/js/Stock.js"></script>
+    <script>
+        $("#filesheet").on("change", function () {
+            var file = document.getElementById("filesheet");
+            if (file.files[0] != undefined) {
+                console.log("file", file.files[0].name);
+                $(".file-name").html(file.files[0].name);
+            } else {
+                $(".file-name").html(" ");
+            }
+        });
+
+    </script>
+}
+

@@ -15,7 +15,7 @@ namespace Loadability.Models
         public Sku Sku { get; set; }
         public decimal PrQty { get; set; }
         [Column(TypeName = "datetime2")]
-        public DateTime IssueDate { get; set; }
+        public DateTime PrDate { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime CreatedAt { get; set; }
     }

@@ -46,44 +46,74 @@ namespace Loadability.Controllers
             var p = _ctx.DailyPlan.AsNoTracking().Where(x => x.CfaId == lp.CfaId && x.SkuId == lp.SkuId && x.PlanDate == lp.PlanDate).FirstOrDefault();
             if (p == null)
             {
+                lp.SHQ = lp.PriorityQty - lp.SIT;
                 _ctx.DailyPlan.Add(lp);
             }
             else
             {
+                lp.SHQ = lp.PriorityQty - lp.SIT;
                 _ctx.Entry(lp).State = System.Data.Entity.EntityState.Modified;
             }
             _ctx.SaveChanges();
+            Prioritize(lp.PlanDate);
             return Json(lp,JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public ActionResult UploadExcel(HttpPostedFileBase excel, DateTime? date)
+        public ActionResult UploadExcel( DailyPlanDto updp)
         {
+            var excel = updp.excel;
+            var date=Convert.ToDateTime(updp.SaveDate);
             try
             {
                 if (excel.ContentLength > 0)
                 {
                     string _FileName = Path.GetFileName(excel.FileName);
-                    if (!Directory.Exists(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month)))
+                    if (!Directory.Exists(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month+"_"+ DateTime.UtcNow.Year)))
                     {
-                        Directory.CreateDirectory(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month));
+                        Directory.CreateDirectory(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month + "_" + DateTime.UtcNow.Year));
                     }
-                    string _path = Path.Combine(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month),"Plan_"+DateTime.UtcNow.ToString("dd")+"_"+ _FileName);
+                    string _path = Path.Combine(Server.MapPath("~/Content/Excel/DailyPlan_" + DateTime.UtcNow.Month + "_" + DateTime.UtcNow.Year),"Plan_"+DateTime.UtcNow.ToString("dd_MM_yyyy_HH_mm_ss")+"_"+ _FileName);
                     excel.SaveAs(_path);
                    
-                   var Data=MiniExcel.Query<ImportDailyPlan>(_path);
-                    List<DailyPlan> dp= new List<DailyPlan>();
+                    var Data=MiniExcel.Query<ImportDailyPlan>(_path);
+                    if (Data.Count() < 1 || Data==null)
+                    {
+                        Response.StatusCode = 412;
+                        return Json(new { Message = "No Data In Uploaded File" }, JsonRequestBehavior.AllowGet);
+                    }
+                    FileModel fm = new FileModel();
+                    var fmdb = _ctx.FileModels.Where(x => x.UploadedAt == date).FirstOrDefault();
+                    if (fmdb == null)
+                    {
+                        fm.FileTitle = "DailyPlan";
+                        fm.FileLocation = _path;
+                        fm.UploadedAt = date.Date;
+                        _ctx.FileModels.Add(fm);
+                    }
+                    else
+                    {
+                        fm = fmdb;
+                        fm.FileLocation = _path;
+                    }
+               
+                    _ctx.SaveChanges();
 
+                    List<DailyPlan> dp= new List<DailyPlan>();
+                     
                     foreach (var a in Data)
                     {
                         var cfaid = _ctx.Cfa.Where(x => x.DepoCode == a.CFA).FirstOrDefault().CfaId;
                         var skuid = _ctx.Sku.Where(x => x.SkuCode == a.SKU).FirstOrDefault().SkuId;
-                        var plan = _ctx.DailyPlan.Where(x => x.CfaId == cfaid && x.SkuId == skuid && x.PlanDate == a.PlanDate.Date).FirstOrDefault();
+                        var plan = _ctx.DailyPlan.Where(x => x.CfaId == cfaid && x.SkuId == skuid && x.PlanDate == date).FirstOrDefault();
+                       
                         if (plan != null)
                         {
                             plan.PriorityQty = a.Priority;
-                            plan.QtyInTransit = a.SIT;
+                            plan.SIT = a.SIT;
+                            plan.SHQ = a.Priority - a.SIT;
+                            plan.PlanDate = date;
                             _ctx.SaveChanges();
-                            Prioritize(plan.CfaId,plan.PlanDate);
+                           
                         }
                         else
                         {
@@ -92,16 +122,17 @@ namespace Loadability.Controllers
                                 CfaId = cfaid,
                                 SkuId = skuid,
                                 PriorityQty = a.Priority,
-                                QtyInTransit = a.SIT,
-                                PlanDate = a.PlanDate
+                                SIT = a.SIT,
+                                SHQ = a.Priority - a.SIT,
+                                PlanDate = date
                             };
                             _ctx.DailyPlan.Add(ndp);
                             _ctx.SaveChanges();
-                            Prioritize(cfaid, a.PlanDate);
+                          
                         }
                        
                     }
-
+                    Prioritize(date);
 
                     return Json(dp, JsonRequestBehavior.AllowGet);
 
@@ -118,43 +149,58 @@ namespace Loadability.Controllers
            
         }
 
-        private bool Prioritize( int cfa, DateTime PlanDate )
+        private bool Prioritize(  DateTime PlanDate )
         {
-            var dailyplan = _ctx.DailyPlan.Where(x => x.CfaId == cfa && x.PlanDate == PlanDate).OrderByDescending(x => x.PriorityQty).ToList();
-            List<Priority> priorities= new List<Priority>();
-            foreach (var i in dailyplan)
+            var dp = _ctx.DailyPlan.Where(x => x.PlanDate == PlanDate.Date).GroupBy(x => x.PriorityQty).OrderByDescending(x => x.Key).ToList();
+            int Rank = 1;
+            foreach(var i in dp)
             {
-               var p= _ctx.Priority.Where(x => x.DailyPlanId == i.DailyPlanId).FirstOrDefault();
-                if (p == null)
-                {
-                    priorities.Add(new Priority
+               
+                    var j = i.OrderByDescending(x => x.SHQ);
+                    foreach(var k in j)
                     {
-                        DailyPlanId = i.DailyPlanId,
-                        Qty = i.PriorityQty - i.QtyInTransit,
-                        Scheduled = PlanDate,
-                        CfaId=i.CfaId,
-                    }); ;
-                }
-                else
-                {
-                    p.Qty = i.PriorityQty - i.QtyInTransit;
-                    p.Scheduled = PlanDate;
-                    p.CfaId = i.CfaId;
-                    _ctx.SaveChanges();
-                }
-            }
-            _ctx.Priority.AddRange(priorities);
-            _ctx.SaveChanges();
-            var priority = _ctx.Priority.Where(x => x.CfaId == cfa && x.Scheduled == PlanDate && x.Qty>0).OrderByDescending(x => x.Qty).ToList();
-            var j = 1;
-            foreach(var i in priority)
-            {
-                i.Rank = j;
-                j++;
-            }
-            _ctx.SaveChanges();
-            return true;
+                     var pri = _ctx.Priority.Where(x => x.CfaId == k.CfaId && x.SkuId == k.SkuId && x.PlanDate == PlanDate).FirstOrDefault();
+                    if (pri == null)
+                    {
+                        var Priority = new Priority();
+                        Priority.SkuId = k.SkuId;
+                        Priority.CfaId = k.CfaId;
+                        Priority.PlanDate = PlanDate;
+                        Priority.SHQ = k.SHQ;
+                        Priority.IsPlaned = false;
+                        if(Priority.SHQ>1)
+                        {
+                            Priority.Rank = Rank;
+                            Rank++;
+                        }
+                        else
+                        {
+                            Priority.Rank = (-1) * Rank;
+                        }
+                        _ctx.Priority.Add(Priority);
+                        _ctx.SaveChanges();
 
+                    }
+                    else
+                    {
+                        pri.SHQ = k.SHQ;
+                        pri.IsPlaned = false;
+                        pri.PlanDate = PlanDate;
+                        if (pri.SHQ > 1)
+                        {
+                            pri.Rank = Rank;
+                            Rank++;
+                        }
+                        else
+                        {
+                           pri.Rank = (-1) * Rank;
+                        }
+                        _ctx.SaveChanges();
+                    }
+                    }
+               
+            }
+            return true;
         }
       
     }
