@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "PlanedPriorities";
+    Layout = "~/Views/Shared/_Dashboard_Layout.cshtml";
+}
+
+
+
+<div class="container px-10 pt-4">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/DailyPlan">Daily Plan</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Priority/">Prioritized Daily Plan</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/PrDetails">Add PR Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="/Stock">Add Stock Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link  active" href="/LoadPlan/PlanedPriorities">Priorities</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/LoadPlan">Load Plan - CFA</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" ng-app="LoadPlan" ng-controller="LoadPlanController">
+        <div id="menu2" class="container tab-pane active " ng-init="init()">
+            <h3 class="my-3 text-center text-primary my-3">Load Plan</h3>
+
+
+            <div class="container-fluid pb-3  mb-3">
+                <div class="row">
+                    <div class="col-md-4  mt-3">
+                        <div class="form-group">
+                            <label class="text-primary" for="cfa">Select CFA</label>
+                            <select class="form-control" ng-change="getInitialData()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
+                                <option value="" selected="selected">Select CFA</option>
+                                <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.DepoCode}}</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="form-group">
+                            <label class="text-primary" for="cfa">&nbsp;</label>
+                            <select class="form-control" ng-change="getInitialData()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
+                                <option value="" selected="selected">Select CFA</option>
+                                <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.CfaLocation}}</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    @*<div class="col-md-3 mt-3">
+                            <div class="form-group">
+                                <label class="text-primary" for="cfa">Enter No Of Trucks</label>
+                                <input type="text" ng-model="NoOfTrucks" ng-change="priorityForm()" class="form-control" />
+
+                            </div>
+                        </div>*@
+
+                    <div class="col-md-4 mt-3">
+                        <div class="form-group">
+                            <label class="text-primary" for="cfa">Date</label>
+                            <input class="form-control" type="date" ng-model="payload.Plandate" />
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            
+            
+            <div class="container">
+                <table class=" w-100 my-4" style="overflow-x: scroll;">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center captions">Priorities</th>
+                        </tr>
+                        <tr class="tr-head">
+                            <th>
+                                Cfa
+                            </th>
+                            <th>
+                                Sku
+                            </th>
+
+
+                            <th>
+                                Quantity
+                            </th>
+                            <th>
+                               Rank
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="x in priorities">
+                            <td>{{x.Cfa.DepoCode}} {{x.Cfa.CfaLocation}}</td>
+                            <td>{{x.Sku.SkuCode}} {{x.Sku.SkuTitle}}</td>
+                            <td>{{x.FinalQty}}</td>
+                            <td>{{x.Rank}}</td>
+
+
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @*<script src="~/Content/vendor/jquery/jquery.min.js"></script>*@
+    <script src="~/Content/js/angular.js"></script>
+    <script src="~/Content/js/LoadPlan/plan.js"></script>
+    <script src="~/Content/js/LoadPlan/planedpriorities.js"></script>
+
+}

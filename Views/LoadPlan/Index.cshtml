@@ -19,7 +19,10 @@
             <a class="nav-link " href="/Stock">Add Stock Details</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="/LoadPlan">Load Plan - CFA</a>
+            <a class="nav-link " href="/LoadPlan/PlanedPriorities">Priorities</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link  active" href="/LoadPlan">Load Plan - CFA</a>
         </li>
     </ul>
 
@@ -31,20 +34,20 @@
 
             <div class="container-fluid pb-3  mb-3">
                 <div class="row">
-                    <div class="col-md-4  mt-3">
+                    <div class="col-md-3  mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">Select CFA</label>
-                            <select class="form-control" ng-change="getweight()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
+                            <select class="form-control" ng-change="getInitialData()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
                                 <option value="" selected="selected">Select CFA</option>
                                 <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.DepoCode}}</option>
 
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-3">
+                    <div class="col-md-3 mt-3">
                         <div class="form-group">
                             <label class="text-primary" for="cfa">&nbsp;</label>
-                            <select class="form-control" ng-change="getweight()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
+                            <select class="form-control" ng-change="getInitialData()" name="cfa" id="cfa" ng-model="payload.CfaId" required>
                                 <option value="" selected="selected">Select CFA</option>
                                 <option ng-repeat="x in cfa" value="{{x.CfaId}}">{{x.CfaLocation}}</option>
 
@@ -65,6 +68,12 @@
                             <input class="form-control" type="date" ng-model="payload.Plandate" />
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="form-group mt-4">
+                            <br />
+                            <button class="btn btn-custom btn-gradient" style="height: 31px; display: inline-flex; align-items: center;" ng-click="loadtruck()"> Add Truck</button> 
+                        </div>
+                    </div>
 
 
                 </div>
@@ -75,31 +84,35 @@
                     <div class="col-md-12">
                         <div class="alert alert-success">
                             <strong class="text-primary">Total Weight : {{weight/1000}} Tons  </strong>
-                            <strong class="float-right"> Remaining Weight : {{remainingCapacity/1000}}</strong>
+                            <strong class="float-right"> Remaining Weight : {{remainingCapacity/1000}} Tons</strong>
                         </div>
                         
                     </div>
                    
                 </div>
             </div>
-            <div class="container-fluid pb-5" >
+            <div class="container-fluid pb-5" ng-show="lpShow" >
                 <div class="row px-3">
-                    <div class="col-md-7"></div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <label class="text-primary">Truck Number (Tag)</label>
+                        <input type="text" class="form-control" ng-model="payload.TruckNumber" />
+                    </div>
                     <div class="col-md-4 ">
                         <div class="row">
                             <label class="text-primary">Select Truck </label>
                             
-                                <select class="form-control"    required>
+                                <select class="form-control"  ng-change="getPlan()" ng-model="payload.TruckId"   required>
                                     <option value="" selected="selected">Select Truck</option>
                                     <option ng-repeat="x in trucks" value="{{x.TruckId}}">{{x.Name}}</option>
 
                                 </select>
                         </div>
                     </div>
-                    <div class="col-md-1">
+                    @*<div class="col-md-1">
                         <br />
                         <button class="btn btn-custom btn-gradient" style=" height: 29px; position: relative; top: 8px; display: inline-flex; align-items: center;">✔</button>
-                    </div>
+                    </div>*@
                 </div>
                 <table class=" w-100 my-4" style="overflow-x: scroll;">
                     <thead>
@@ -125,18 +138,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="p in lp.priorities">
+                        <tr ng-repeat="p in planed">
                             <td>{{p.Cfa.DepoCode}} - {{p.Cfa.CfaLocation}}</td>
                             <td>{{p.Sku.SkuCode}} - {{p.Sku.SkuTitle}}</td>
-                            <td>{{p.FinalQty}}</td>
+                            <td>{{p.ToLoad}}</td>
                             <td>{{p.Rank}}</td>
                         </tr>
 
                     </tbody>
                 </table>
+                <div class="row" ng-show="isMsg">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger">
+                            <strong class="text-primary"> {{capacityLeft}} kg Capacity of selected Truck  is still  required to fulfill 95% . Please Confirm Do You want to Load Sku from future Pr ? <br />     </strong>
 
+                        </div>
+                        <button class="btn btn-custom btn-gradient mt-2 float-right" ng-click="getplanFromPr()">Confirm</button>
+                    </div>
+                </div>
                 <div class="container-fluid px-0">
-                    <button class="btn btn-custom btn-gradient">Save Load Plan</button>
+                    <button class="btn btn-custom btn-gradient" ng-click="confirm()">Load</button>
                 </div>
                
             </div>
@@ -144,7 +165,7 @@
                 <table class=" w-100 my-4" style="overflow-x: scroll;">
                     <thead>
                         <tr>
-                            <th colspan="4" class="text-center captions">Priority</th>
+                            <th colspan="4" class="text-center captions">Load Plan</th>
                         </tr>
                         <tr class="tr-head">
                             <th>
@@ -159,20 +180,17 @@
                                 Quantity
                             </th>
                             <th>
-                                Rank
+                               Truck
                             </th>
-
-                         
-
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="x in priorities">
+                        <tr ng-repeat="x in loadPlan">
                             <td>{{x.Cfa.DepoCode}} {{x.Cfa.CfaLocation}}</td>
                             <td>{{x.Sku.SkuCode}} {{x.Sku.SkuTitle}}</td>
                           
-                            <td>{{x.FinalQty}}</td>
-                            <td>{{x.Rank}}</td>
+                            <td>{{x.Qty}}</td>
+                            <td>{{x.Truck.Name}}</td>
                             
 
                         </tr>

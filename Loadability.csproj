@@ -211,6 +211,18 @@
     <Compile Include="Migrations\202203110946593_PrDate.Designer.cs">
       <DependentUpon>202203110946593_PrDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202203170528014_pr_supplied_qty.cs" />
+    <Compile Include="Migrations\202203170528014_pr_supplied_qty.Designer.cs">
+      <DependentUpon>202203170528014_pr_supplied_qty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203170535556_priority_update.cs" />
+    <Compile Include="Migrations\202203170535556_priority_update.Designer.cs">
+      <DependentUpon>202203170535556_priority_update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203171157427_truck_identifier.cs" />
+    <Compile Include="Migrations\202203171157427_truck_identifier.Designer.cs">
+      <DependentUpon>202203171157427_truck_identifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Cfa.cs" />
@@ -225,7 +237,9 @@
     <Compile Include="Models\StockDetails.cs" />
     <Compile Include="Models\Truck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Prioritization.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\ConfirmLoapPlan.cs" />
     <Compile Include="ViewModels\DailyPlanDto.cs" />
     <Compile Include="ViewModels\ImportDailyPlan.cs" />
     <Compile Include="ViewModels\PlanReq.cs" />
@@ -1927,6 +1941,7 @@
     <Content Include="Content\js\angular.js" />
     <Content Include="Content\js\LoadPlan\init.js" />
     <Content Include="Content\js\LoadPlan\plan.js" />
+    <Content Include="Content\js\LoadPlan\planedpriorities.js" />
     <Content Include="Content\js\LoadPlan\Priority.js" />
     <Content Include="Content\js\main.js" />
     <Content Include="Content\js\popper.js" />
@@ -2020,6 +2035,7 @@
     <Content Include="Views\Stock\Index.cshtml" />
     <Content Include="Views\Priority\Index.cshtml" />
     <Content Include="Views\LoadPlan\Index.cshtml" />
+    <Content Include="Views\LoadPlan\PlanedPriorities.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2046,6 +2062,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202203110946593_PrDate.resx">
       <DependentUpon>202203110946593_PrDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203170528014_pr_supplied_qty.resx">
+      <DependentUpon>202203170528014_pr_supplied_qty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203170535556_priority_update.resx">
+      <DependentUpon>202203170535556_priority_update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203171157427_truck_identifier.resx">
+      <DependentUpon>202203171157427_truck_identifier.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

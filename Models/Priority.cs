@@ -22,6 +22,11 @@ namespace Loadability.Models
         public bool InStock { get; set; }
         public decimal QtyFromPr { get; set; }
         public decimal FinalQty { get; set; }
+        public decimal PendingQty { get; set; }
+        public decimal LoadedQty { get; set; }
+        [NotMapped]
+        public decimal ToLoad { get; set; }
+
         public bool IsPlaned { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime PlanDate { get; set; }
