@@ -25,7 +25,7 @@ namespace Loadability.Controllers
         }
         public ActionResult Save(StockDetails sd)
         {
-            var s = _ctx.StockDetails.Where(x => x.SkuId == sd.SkuId && x.RecordedAt == sd.RecordedAt.Date).FirstOrDefault();
+            var s = _ctx.StockDetails.Where(x => x.SkuId == sd.SkuId ).FirstOrDefault();
             if (s == null)
             {
                 sd.RecordedAt = sd.RecordedAt.Date;
