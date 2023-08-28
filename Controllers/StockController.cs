@@ -36,7 +36,7 @@ namespace Loadability.Controllers
             }
             else
             {
-                s.StartQty = sd.StartQty;
+                s.StartQty = sd.StartQty+ s.AvailableQty;
                 s.AvailableQty = sd.StartQty;
                 _ctx.SaveChanges();
                 return Json(new { SkuId = s.SkuId.ToString(), RecordedAt = s.RecordedAt, StartQty = s.StartQty },JsonRequestBehavior.AllowGet);
@@ -46,7 +46,7 @@ namespace Loadability.Controllers
         public ActionResult getStock(StockDetails sd)
         {
             var date = sd.RecordedAt.Date;
-            var st = _ctx.StockDetails.Where(x => x.SkuId == sd.SkuId && x.RecordedAt == date).FirstOrDefault();
+            var st = _ctx.StockDetails.Where(x => x.SkuId == sd.SkuId).FirstOrDefault();
             if (st == null)
             {
                 st = sd;
@@ -94,11 +94,12 @@ namespace Loadability.Controllers
                     {
                         var skuid = _ctx.Sku.Where(x => x.SkuCode == a.SKU).FirstOrDefault().SkuId;
                         var d = date.Date;
-                        var s = _ctx.StockDetails.Where(x => x.SkuId == skuid && x.RecordedAt == d).FirstOrDefault();
+                        var s = _ctx.StockDetails.Where(x => x.SkuId == skuid).FirstOrDefault();
                         if (s != null)
                         {
-                            s.StartQty = a.Quantity;
-                            s.AvailableQty = a.Quantity;
+                            s.StartQty = s.AvailableQty + a.Quantity;
+                            s.AvailableQty = s.StartQty;
+                            s.RecordedAt = d;
                             _ctx.SaveChanges();
                         }
                         else

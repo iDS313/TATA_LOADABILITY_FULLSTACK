@@ -223,6 +223,14 @@
     <Compile Include="Migrations\202203171157427_truck_identifier.Designer.cs">
       <DependentUpon>202203171157427_truck_identifier.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202203211005002_IsPlaned_IsLoaded_Changed.cs" />
+    <Compile Include="Migrations\202203211005002_IsPlaned_IsLoaded_Changed.Designer.cs">
+      <DependentUpon>202203211005002_IsPlaned_IsLoaded_Changed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202203211126428_IS_Compared.cs" />
+    <Compile Include="Migrations\202203211126428_IS_Compared.Designer.cs">
+      <DependentUpon>202203211126428_IS_Compared.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Cfa.cs" />
@@ -2071,6 +2079,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202203171157427_truck_identifier.resx">
       <DependentUpon>202203171157427_truck_identifier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203211005002_IsPlaned_IsLoaded_Changed.resx">
+      <DependentUpon>202203211005002_IsPlaned_IsLoaded_Changed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202203211126428_IS_Compared.resx">
+      <DependentUpon>202203211126428_IS_Compared.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

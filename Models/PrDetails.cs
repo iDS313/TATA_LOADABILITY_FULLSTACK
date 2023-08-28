@@ -14,6 +14,7 @@ namespace Loadability.Models
         public Cfa Cfa { get; set; }
         public Sku Sku { get; set; }
         public decimal PrQty { get; set; }
+        public int IsPlaned { get; set; }  // 0= not planed; 1= planed; 2 =partial
         public decimal SuppliedQty { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime PrDate { get; set; }

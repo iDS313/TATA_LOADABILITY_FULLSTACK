@@ -26,8 +26,8 @@ namespace Loadability.Models
         public decimal LoadedQty { get; set; }
         [NotMapped]
         public decimal ToLoad { get; set; }
-
-        public bool IsPlaned { get; set; }
+        public bool IsLoaded { get; set; }
+        public bool IsCompared { get; set; }
         [Column(TypeName = "datetime2")]
         public DateTime PlanDate { get; set; }
     }

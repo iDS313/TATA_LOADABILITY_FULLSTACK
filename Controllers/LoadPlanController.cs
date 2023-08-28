@@ -35,8 +35,8 @@ namespace Loadability.Controllers
         public ActionResult getPriorities(PlanReq pl)
         {
             var priorities = _ctx.Priority.Include(x => x.Cfa).Include(x => x.Sku).Where(x => x.CfaId == pl.CfaId && x.PlanDate == pl.Plandate.Date && x.Rank > 0).OrderBy(x => x.Rank).ToList();
-            var planed = priorities.Where(x => x.IsPlaned == true).OrderBy(x=>x.Rank);
-            var unplaned = priorities.Where(x => x.IsPlaned == false || (x.IsPlaned == true && x.PendingQty > 0)).OrderBy(x => x.Rank);
+            var planed = priorities.Where(x => x.IsLoaded == true).OrderBy(x=>x.Rank);
+            var unplaned = priorities.Where(x => x.IsLoaded == false || (x.IsLoaded == true && x.PendingQty > 0)).OrderBy(x => x.Rank);
             var loadplan =new List<LoadPlan>();
             foreach(var v in planed)
             {
@@ -55,49 +55,65 @@ namespace Loadability.Controllers
             {
                 i.Cfa = _ctx.Cfa.Find(i.CfaId);
                 i.Sku = _ctx.Sku.Find(i.SkuId);
-                var pr = _ctx.PrDetails.Where(x => x.CfaId == i.CfaId && x.SkuId == i.SkuId).FirstOrDefault();
-                if(pr != null)
+                var pr = _ctx.PrDetails.Where(x => x.CfaId == i.CfaId && x.SkuId == i.SkuId && (x.IsPlaned==0|| x.IsPlaned==2)).FirstOrDefault();
+                if ( i.IsCompared == false)
                 {
-                    i.InPr = true;
-                    i.QtyFromPr = i.SHQ > pr.PrQty ? pr.PrQty : i.SHQ;
-                    pr.SuppliedQty = pr.PrQty - i.QtyFromPr;
-                    _ctx.SaveChanges();
-                }
-                else
-                {
-                    i.InPr = false;
-                }
-
-                var stk = _ctx.StockDetails.Where(x => x.SkuId == i.SkuId && x.RecordedAt == i.PlanDate).FirstOrDefault();
-                if (stk != null)
-                {
-                    i.InStock = true;
-                    if (i.FinalQty < 1)
+                    if (pr != null)
                     {
-                        i.FinalQty = i.QtyFromPr > stk.AvailableQty ? stk.AvailableQty : i.QtyFromPr;
-                        stk.AvailableQty = stk.AvailableQty - i.FinalQty;
+                        i.InPr = true;
+                        i.QtyFromPr = i.SHQ > pr.PrQty ? pr.PrQty : i.SHQ;
+                        pr.SuppliedQty = pr.SuppliedQty + pr.PrQty - i.QtyFromPr;
+                        if (pr.PrQty - pr.SuppliedQty > 0)
+                        {
+                            pr.IsPlaned = 2;
+                        }
+                        else if (pr.PrQty - pr.SuppliedQty == 0)
+                        {
+                            pr.IsPlaned = 1;
+                        }
+                        else
+                        {
+                            pr.IsPlaned = 0;
+                        }
                         _ctx.SaveChanges();
                     }
                     else
                     {
-                        stk.AvailableQty = stk.AvailableQty + i.FinalQty;
-                        i.FinalQty= i.QtyFromPr > stk.AvailableQty ? stk.AvailableQty : i.QtyFromPr;
-                        stk.AvailableQty = stk.AvailableQty - i.FinalQty;
-                        _ctx.SaveChanges();
+                        i.InPr = false;
                     }
-                }
-                else
-                {
-                    i.InStock = false;
-                }
-                if (i.LoadedQty < 1)
-                {
-                    i.PendingQty = i.FinalQty;
+
+                    var stk = _ctx.StockDetails.Where(x => x.SkuId == i.SkuId).FirstOrDefault();
+                    if (stk != null && stk.AvailableQty > 0)
+                    {
+                        i.InStock = true;
+                        if (i.FinalQty < 1)
+                        {
+                            i.FinalQty = i.QtyFromPr > stk.AvailableQty ? stk.AvailableQty : i.QtyFromPr;
+                            stk.AvailableQty = stk.AvailableQty - i.FinalQty;
+                            _ctx.SaveChanges();
+                        }
+                        else
+                        {
+                            stk.AvailableQty = stk.AvailableQty + i.FinalQty;
+                            i.FinalQty = i.QtyFromPr > stk.AvailableQty ? stk.AvailableQty : i.QtyFromPr;
+                            stk.AvailableQty = stk.AvailableQty - i.FinalQty;
+                            _ctx.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        i.InStock = false;
+                    }
+                    if (i.LoadedQty < 1)
+                    {
+                        i.PendingQty = i.FinalQty;
+                    }
+                    i.IsCompared = true;
                 }
             }
             _ctx.SaveChanges();
             var lp = new List<LoadPlan>();
-            var planed = priorities.Where(x => x.IsPlaned == true).OrderBy(c => c.Rank);
+            var planed = priorities.Where(x => x.IsLoaded == true).OrderBy(c => c.Rank);
             foreach (var c in planed)
             {
                 var load = _ctx.LoadPlans.Include(x=>x.Truck).Include(x=>x.Cfa).Include(y=>y.Sku).Where(x => x.CfaId == c.CfaId && x.SkuId == c.SkuId && x.PlanDate == c.PlanDate);
@@ -107,15 +123,15 @@ namespace Loadability.Controllers
                 }
             }
             var weight = priorities.Where(x=>x.InStock==true && x.InPr==true ).Sum(x => x.FinalQty);
-            var remain = priorities.Where(x => (x.IsPlaned == false ||  (x.IsPlaned == true &&  x.PendingQty>0) ) && x.Rank > 0).Sum(x => x.PendingQty);
+            var remain = priorities.Where(x => (x.IsLoaded == false ||  (x.IsLoaded == true &&  x.PendingQty>0) ) && x.Rank > 0).Sum(x => x.PendingQty);
             return Json(new { weight = weight, priorities = priorities,remaining=remain, loadplan=lp }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult getPlan(PlanReq pl)
         {
             var priorities = _ctx.Priority.AsNoTracking().Include(x=>x.Sku).Include(x=>x.Cfa).Where(x => x.CfaId == pl.CfaId && x.PlanDate == pl.Plandate.Date && x.Rank > 0 ).OrderBy(x => x.Rank).ToList();
-            var unplaned = priorities.Where(x => x.IsPlaned == false || (x.IsPlaned==true && x.PendingQty>0) ).OrderBy(x => x.Rank);
-            var planed = priorities.Where(x => x.IsPlaned == true).OrderBy(c => c.Rank);
+            var unplaned = priorities.Where(x => x.IsLoaded == false || (x.IsLoaded==true && x.PendingQty>0) ).OrderBy(x => x.Rank);
+            var planed = priorities.Where(x => x.IsLoaded == true).OrderBy(c => c.Rank);
             var truck = _ctx.Trucks.Find(pl.TruckId);
             List<Priority> p = new List<Priority>();
             var lp = new List<LoadPlan>();
@@ -182,14 +198,14 @@ namespace Loadability.Controllers
                 prio.PendingQty = prio.FinalQty - prio.LoadedQty;
                 
                 load.TruckId = truck.TruckId;
-                prio.IsPlaned = true;
+                prio.IsLoaded = true;
                 _ctx.LoadPlans.Add(load);
                 _ctx.SaveChanges();
                 
             }
             var prioritiez = _ctx.Priority.Where(x => x.PlanDate == confirm.payload.Plandate.Date && x.CfaId == confirm.payload.CfaId && x.Rank > 0).OrderBy(x => x.Rank).ToList();
-            var unplaned = prioritiez.Where(x => x.IsPlaned == false || (x.IsPlaned==true  )).OrderBy(x => x.Rank);
-            var planed = prioritiez.Where(x => x.IsPlaned == true).OrderBy(c => c.Rank);
+            var unplaned = prioritiez.Where(x => x.IsLoaded == false || (x.IsLoaded==true  )).OrderBy(x => x.Rank);
+            var planed = prioritiez.Where(x => x.IsLoaded == true).OrderBy(c => c.Rank);
             foreach (var c in planed)
             {
                 var load = _ctx.LoadPlans.Include(e => e.Sku).Include(x=>x.Truck).Include(d => d.Cfa).Where(x => x.CfaId == c.CfaId && x.SkuId == c.SkuId && x.PlanDate == c.PlanDate);
